@@ -2,30 +2,34 @@ from pydantic import BaseModel
 from sqlalchemy.exc import NoResultFound
 
 from app.db.db import Url, User
+from app.models import UserResponse
 from ..models import AuthRequest, URLRecord, UserRecord, ShortenURLRequest
 from sqlalchemy.orm import Session
 
 # Get User - Create User - Create Url - Get Url from Short - Get Url from Long
 # Get user Urls, delete url
 
-def get_user_by_id(user_id:int, db:Session):
+def get_user_by_id(user_id:int, db:Session) -> UserRecord :
     db_user = db.query(User).filter(User.id == user_id).first()
     if db_user is None:
         raise NoResultFound()
-    return db_user
+    return UserRecord(**db_user.__dict__)
 
-def get_user_by_username(username:str, db:Session):
+def get_user_by_username(username:str, db:Session) -> UserRecord :
     db_user = db.query(User).filter(User.username == username).first()
     if db_user is None:
-        raise NoResultFound()
-    return db_user
+        return None
+    return UserRecord(**db_user.__dict__)
 
 def create_user(auth_request:AuthRequest, db: Session) -> UserRecord :
     db_user = User(**auth_request.model_dump())
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return UserRecord(**db_user.__dict__) 
+    db_dict = db_user.__dict__
+    del db_dict['password']
+    del db_dict['created_at']
+    return db_dict 
         
 def create_url(url_request:ShortenURLRequest, short_url:str, db:Session) -> URLRecord :
     dumped_req = url_request.model_dump()

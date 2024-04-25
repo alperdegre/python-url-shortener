@@ -1,15 +1,8 @@
-import datetime
 from Crypto.Hash import SHA256
 import os 
 import jwt
-from pydantic import BaseModel, Field
-
+from .models import JWTRequest
 BASE_URL="http://test.com"
-
-class JWTRequest(BaseModel):
-    user_id: str
-    username: str
-    exp: datetime.datetime = Field(default_factory=lambda: datetime.datetime.now() + datetime.timedelta(hours=24))
 
 def create_url_hash(size:int):
     random_bytes = os.urandom(32)
@@ -27,7 +20,7 @@ def create_jwt(data:JWTRequest):
 def decode_jwt(jwtToken:str):
     try:
         decoded = jwt.decode(jwtToken, "secret", algorithms=["HS256"])
-        return decoded.user_id, None
+        return decoded['user_id'], None
     except jwt.InvalidSignatureError:
         print("Invalid secret key")
         return None, "Invalid secret key"
@@ -37,5 +30,7 @@ def decode_jwt(jwtToken:str):
     except jwt.ExpiredSignatureError:
         print("JWT Expired")
         return None, "JWT has expired"
-    except Exception:
+    except Exception as e:
+        print(f"An unexpected error occurred: {str(e)}")
         return None, "An unexpected error has occured"
+
