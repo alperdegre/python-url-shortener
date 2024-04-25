@@ -5,6 +5,7 @@ import jwt
 from pydantic import BaseModel, Field
 
 class JWTRequest(BaseModel):
+    user_id: str
     username: str
     exp: datetime.datetime = Field(default_factory=lambda: datetime.datetime.now() + datetime.timedelta(hours=24))
 
@@ -20,10 +21,9 @@ def create_jwt(data:JWTRequest):
     return encoded
 
 def decode_jwt(jwtToken:str):
-    decoded = ""
     try:
         decoded = jwt.decode(jwtToken, "secret", algorithms=["HS256"])
-        return decoded, None
+        return decoded.user_id, None
     except jwt.InvalidSignatureError:
         print("Invalid secret key")
         return None, "Invalid secret key"
@@ -33,5 +33,5 @@ def decode_jwt(jwtToken:str):
     except jwt.ExpiredSignatureError:
         print("JWT Expired")
         return None, "JWT has expired"
-    except Exception as e:
+    except Exception:
         return None, "An unexpected error has occured"

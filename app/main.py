@@ -24,8 +24,6 @@ app.include_router(url.router)
 
 @app.get("/")
 def test_route():
-    encoded = create_jwt(JWTRequest(username="alperdegre"))
-    print(encoded)
+    encoded = create_jwt(JWTRequest(username="alperdegre", user_id="1"))
     decoded = decode_jwt(encoded)
-    print(decoded)
     return {"Hello":"World", "encoded":encoded, "decoded":decoded}
