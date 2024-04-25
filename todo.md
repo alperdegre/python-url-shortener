@@ -45,38 +45,11 @@ Get the same frontend used on Golang url shortener. Change the styling to suit p
 How to test dbs I want write tests for everything
 Do an sqlite db. Host server on a container with static html frontend.
 
-## Need to learn hwo to hash stuff
-
-    >>> from Crypto.Hash import SHA256
-    >>> hash = SHA256.new()
-    >>> hash.update('message')
-    >>> hash.digest()
-    '\xabS\n\x13\xe4Y\x14\x98+y\xf9\xb7\xe3\xfb\xa9\x94\xcf\xd1\xf3\xfb"\xf7\x1c\xea\x1a\xfb\xf0+F\x0cm\x1d'
-
 ## Redirects on FastAPI
 
     @app.get("/teleport")
     async def get_teleport() -> RedirectResponse:
     return RedirectResponse(url="https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-
-## Cors on FastAPI
-
-    app = FastAPI()
-
-    origins = [
-        "http://localhost.tiangolo.com",
-        "https://localhost.tiangolo.com",
-        "http://localhost",
-        "http://localhost:8080",
-    ]
-
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=origins,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
 
 ## Middlewares on FastAPI for authmiddleware
 

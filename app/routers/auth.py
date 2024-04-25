@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
-from fastapi.exceptions import BaseModel
-from ..dependencies import get_auth_token
+from pydantic import BaseModel
+from ..dependencies import get_user_id
 
 router = APIRouter(
 prefix="/auth",
