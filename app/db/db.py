@@ -7,7 +7,6 @@ from sqlalchemy.sql import func
 from datetime import datetime
 from sqlalchemy import create_engine
 
-
 class Base(DeclarativeBase):
     pass
 

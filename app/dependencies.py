@@ -15,8 +15,6 @@ async def get_user_id(authorization: Annotated[str, Header()]):
 
     return user
     
-
-
 def validate_authorization(auth_header:str):
     decoded, error = decode_jwt(auth_header)
 

@@ -4,6 +4,8 @@ import os
 import jwt
 from pydantic import BaseModel, Field
 
+BASE_URL="http://test.com"
+
 class JWTRequest(BaseModel):
     user_id: str
     username: str
@@ -15,6 +17,8 @@ def create_url_hash(size:int):
     random_hash = hash_object.hexdigest()
     return random_hash[:size]
 
+def create_short_url(hash:str):
+    return BASE_URL + "/" + hash
 
 def create_jwt(data:JWTRequest):
     encoded = jwt.encode(data.model_dump(), "secret", algorithm="HS256")

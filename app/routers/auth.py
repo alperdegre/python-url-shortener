@@ -1,24 +1,22 @@
-from fastapi import APIRouter 
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends 
+from sqlalchemy.orm import Session
+
+from app.db.db import get_db
+from app.db.repository import create_user
 # from ..dependencies import get_user_id
+from ..models import AuthRequest
 
 router = APIRouter(
 prefix="/auth",
 )
 
-class AuthRequest(BaseModel):
-    username: str
-    password: str
-
 testdb = []
 
-@router.get("/signup")
-async def signup(request: AuthRequest):
-    print(request)
-    testdb.append(request)
-    return [{"test1":"resp1"}, {"test2":"resp2"}]
+@router.post("/signup")
+async def signup(request: AuthRequest, db: Session = Depends(get_db)):
+    return create_user(request, db)
 
-@router.get("/login")
+@router.post("/login")
 async def login(request: AuthRequest):
     return [{"test1":"resp1"}, {"test2":testdb}]
 
