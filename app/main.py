@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
+from app.db.db import Base, try_create
 from app.utils import JWTRequest, create_jwt, decode_jwt
 from .routers import auth, url
 
@@ -20,6 +21,11 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(url.router)
+
+@app.on_event("startup")
+async def startup():
+    try_create()
+
 
 @app.get("/{hash}")
 async def redirect_route(hash:str) -> RedirectResponse:

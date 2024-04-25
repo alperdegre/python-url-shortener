@@ -45,45 +45,6 @@ Get the same frontend used on Golang url shortener. Change the styling to suit p
 How to test dbs I want write tests for everything
 Do an sqlite db. Host server on a container with static html frontend.
 
-## Redirects on FastAPI
-
-    @app.get("/teleport")
-    async def get_teleport() -> RedirectResponse:
-    return RedirectResponse(url="https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-
-## Middlewares on FastAPI for authmiddleware
-
-    def get_current_user(authorization: str = Header(None)):
-        if authorization is None or not validate_authorization(authorization):
-            raise HTTPException(status_code=401, detail="Unauthorized")
-        user = decode_user_from_auth(authorization)
-        return user
-
-    def validate_authorization(auth_header: str) -> bool:
-        # Implement your validation logic here
-        # Example: Check if the token is valid
-        return auth_header == "ValidToken"  # Simplified example
-
-    def decode_user_from_auth(auth_header: str):
-        # Decode and return the user based on the authorization header
-        # Example: Extract user information from the token
-        return "decoded_user"
-
-    app = FastAPI()
-
-    @app.get("/secure")
-    def secure_route(user: str = Depends(get_current_user)):
-        return {"message": "Hello, Secure World", "user": user}
-        
-## Jsonwebtoken on FastAPI
-
-    >>> import jwt
-    >>> encoded_jwt = jwt.encode({"some": "payload"}, "secret", algorithm="HS256")
-    >>> print(encoded_jwt)
-    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb21lIjoicGF5bG9hZCJ9.4twFt5NiznN84AWoo1d7KO1T_yoc0Z6XOpOVswacPZg
-    >>> jwt.decode(encoded_jwt, "secret", algorithms=["HS256"])
-    {'some': 'payload'}
-
 # Example routing stuff
 
     https://fastapi.tiangolo.com/tutorial/bigger-applications/
