@@ -1,12 +1,13 @@
 from Crypto.Hash import SHA256
 import os 
+from fastapi import HTTPException
 import jwt
 import math
+
+from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 from app.db.repository import get_url_from_short_url
 from .models import JWTRequest
 from sqlalchemy.orm import Session
-
-BASE_URL="http://localhost:8000"
 
 def create_url_hash(size:int, db:Session):
     hash=None
@@ -34,15 +35,20 @@ def create_and_check_hash(size:int,i:int, db:Session):
 
 
 def create_short_url(hash:str):
+    BASE_URL = os.getenv("BASE_URL")
+
+    if BASE_URL is None:
+        raise HTTPException(status_code=HTTP_500_INTERNAL_SERVER_ERROR, detail="Server error")
+
     return BASE_URL + "/" + hash
 
 def create_jwt(data:JWTRequest):
-    encoded = jwt.encode(data.model_dump(), "secret", algorithm="HS256")
+    encoded = jwt.encode(data.model_dump(), os.getenv("JWT_SECRET", ""), algorithm="HS256")
     return encoded
 
 def decode_jwt(jwtToken:str):
     try:
-        decoded = jwt.decode(jwtToken, "secret", algorithms=["HS256"])
+        decoded = jwt.decode(jwtToken, os.getenv("JWT_SECRET", ""), algorithms=["HS256"])
         return decoded['user_id'], None
     except jwt.InvalidSignatureError:
         print("Invalid secret key")

@@ -1,10 +1,10 @@
+import os
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from app.db.db import Base, try_create
 from app.db.repository import get_url_from_short_url
 from sqlalchemy.orm import Session
-from app.utils import BASE_URL 
 from .routers import auth, url
 from app.db.db import get_db
 
@@ -35,7 +35,7 @@ async def redirect_route(hash:str, db: Session = Depends(get_db)) -> RedirectRes
     url_record = get_url_from_short_url(hash, db)
 
     if url_record == None:
-        return RedirectResponse(BASE_URL)
+        return RedirectResponse(os.getenv("BASE_URL", ""))
     
     url_dict = url_record.model_dump()
     return RedirectResponse(url=url_dict['long_url'])
