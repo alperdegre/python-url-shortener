@@ -1,8 +1,7 @@
-from typing import Union
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.utils import JWTRequest, create_jwt, create_url_hash, decode_jwt
+from fastapi.responses import RedirectResponse
+from app.utils import JWTRequest, create_jwt, decode_jwt
 from .routers import auth, url
 
 app = FastAPI()
@@ -21,6 +20,10 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(url.router)
+
+@app.get("/{hash}")
+async def redirect_route(hash:str) -> RedirectResponse:
+    return RedirectResponse(url="")
 
 @app.get("/")
 def test_route():
