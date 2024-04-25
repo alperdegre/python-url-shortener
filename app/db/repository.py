@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 def get_user_by_id(user_id:int, db:Session) -> UserRecord :
     db_user = db.query(User).filter(User.id == user_id).first()
     if db_user is None:
-        raise NoResultFound()
+        return None
     return UserRecord(**db_user.__dict__)
 
 def get_user_by_username(username:str, db:Session) -> UserRecord :
@@ -43,13 +43,13 @@ def create_url(url_request:ShortenURLRequest, short_url:str, db:Session) -> URLR
 def get_url_from_short_url(short_url:str, db:Session) -> URLRecord:
     db_url = db.query(Url).filter(Url.short_url == short_url).first()
     if db_url is None:
-        raise NoResultFound()
+        return None
     return URLRecord(**db_url.__dict__)
 
 def get_url_from_long_url(long_url:str, db:Session) -> URLRecord:
     db_url = db.query(Url).filter(Url.long_url == long_url).first()
     if db_url is None:
-        raise NoResultFound()
+        return None
     return URLRecord(**db_url.__dict__)
 
 def get_url_from_id(url_id:int, db:Session) -> URLRecord:
@@ -60,9 +60,9 @@ def get_url_from_id(url_id:int, db:Session) -> URLRecord:
 
 def get_user_urls(user_id:int, db:Session):
     user_urls = db.query(Url).filter(Url.user_id == user_id).all()
-    return user_urls.__dict__
+    return [url.__dict__ for url in user_urls]
 
-def delete_url(url_id:int, db:Session) -> URLRecord:
+def delete_url_from_db(url_id:int, db:Session) -> URLRecord:
     db_url = get_url_from_id(url_id, db)
     db.delete(db_url)
     db.commit()

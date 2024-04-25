@@ -2,7 +2,8 @@ from Crypto.Hash import SHA256
 import os 
 import jwt
 from .models import JWTRequest
-BASE_URL="http://test.com"
+
+BASE_URL="http://localhost:8000"
 
 def create_url_hash(size:int):
     random_bytes = os.urandom(32)

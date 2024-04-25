@@ -1,16 +1,19 @@
 from typing import Annotated
 from fastapi import Header, HTTPException
+from sqlalchemy.exc import NoResultFound
+from starlette.status import HTTP_401_UNAUTHORIZED
 
+from app.db.repository import get_user_by_id
 from app.utils import decode_jwt
 
 async def get_user_id(authorization: Annotated[str, Header()]):
     if authorization is None:
-        raise HTTPException(status_code=400, detail="Unauthorized")
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Unauthorized")
 
     user_id, error = validate_authorization(authorization)
 
     if error:
-        raise HTTPException(status_code=400, detail=error)
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail=error)
 
     return user_id
     

@@ -1,9 +1,12 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 from app.db.db import Base, try_create
-from app.utils import JWTRequest, create_jwt, decode_jwt
+from app.db.repository import get_url_from_short_url
+from sqlalchemy.orm import Session
+from app.utils import BASE_URL 
 from .routers import auth, url
+from app.db.db import get_db
 
 app = FastAPI()
 
@@ -28,11 +31,11 @@ async def startup():
 
 
 @app.get("/{hash}")
-async def redirect_route(hash:str) -> RedirectResponse:
-    return RedirectResponse(url="")
+async def redirect_route(hash:str, db: Session = Depends(get_db)) -> RedirectResponse:
+    url_record = get_url_from_short_url(hash, db)
 
-@app.get("/")
-def test_route():
-    encoded = create_jwt(JWTRequest(username="alperdegre", user_id="1"))
-    decoded = decode_jwt(encoded)
-    return {"Hello":"World", "encoded":encoded, "decoded":decoded}
+    if url_record == None:
+        return RedirectResponse(BASE_URL)
+    
+    url_dict = url_record.model_dump()
+    return RedirectResponse(url=url_dict['long_url'])
