@@ -11,8 +11,7 @@ class AuthResponse(BaseModel):
     expiry: int
 
 class ShortenURLRequest(BaseModel):
-    long_url: str
-    user_id: int
+    url: str
 
 class UserResponse(BaseModel):
     id: int
