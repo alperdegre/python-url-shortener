@@ -14,7 +14,7 @@ prefix="/api",
 )
 
 @router.post("/shorten")
-async def shorten(request: ShortenURLRequest,_: int = Depends(get_user_id), db: Session = Depends(get_db)):
+async def shorten(request: ShortenURLRequest,user_id: int = Depends(get_user_id), db: Session = Depends(get_db)):
     dict_url = request.model_dump()
     db_url = get_url_from_long_url(dict_url['url'], db)
 
@@ -26,7 +26,7 @@ async def shorten(request: ShortenURLRequest,_: int = Depends(get_user_id), db: 
     if hash is None:
         raise HTTPException(status_code=HTTP_500_INTERNAL_SERVER_ERROR, detail={"error":"There was an error creating hash"})
 
-    return create_url(request, hash, db)
+    return create_url(request, hash, user_id, db)
 
 @router.get("/get")
 async def get_urls(user_id: int = Depends(get_user_id), db: Session = Depends(get_db)):

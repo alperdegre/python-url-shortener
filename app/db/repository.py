@@ -31,10 +31,9 @@ def create_user(auth_request:AuthRequest, db: Session):
     del db_dict['created_at']
     return db_dict 
         
-def create_url(url_request:ShortenURLRequest, short_url:str, db:Session):
+def create_url(url_request:ShortenURLRequest, short_url:str, user_id:int, db:Session):
     dumped_req = url_request.model_dump()
-    dumped_req["short_url"] = short_url
-    db_url = Url(**dumped_req)
+    db_url = Url(short_url=short_url, long_url=dumped_req['url'], user_id=user_id)
     db.add(db_url)
     db.commit()
     db.refresh(db_url)
