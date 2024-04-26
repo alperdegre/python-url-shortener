@@ -11,8 +11,7 @@ from app.db.db import get_db
 app = FastAPI()
 
 origins = [
-    "http://localhost",
-    "http://localhost:4000",
+    "https://short.alperdegre.com",
 ]
 
 app.add_middleware(
@@ -35,7 +34,7 @@ async def redirect_route(hash:str, db: Session = Depends(get_db)) -> RedirectRes
     url_record = get_url_from_short_url(hash, db)
 
     if url_record == None:
-        return RedirectResponse(os.getenv("BASE_URL", ""))
+        return RedirectResponse(url="https://short.alperdegre.com")
     
     url_dict = url_record.model_dump()
     return RedirectResponse(url=url_dict['long_url'])

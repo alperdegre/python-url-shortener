@@ -38,7 +38,7 @@ def create_short_url(hash:str):
     BASE_URL = os.getenv("BASE_URL")
 
     if BASE_URL is None:
-        raise HTTPException(status_code=HTTP_500_INTERNAL_SERVER_ERROR, detail="Server error")
+        raise HTTPException(status_code=HTTP_500_INTERNAL_SERVER_ERROR, detail={"error":"Server error"})
 
     return BASE_URL + "/" + hash
 

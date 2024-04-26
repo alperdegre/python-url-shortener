@@ -8,12 +8,12 @@ from app.utils import decode_jwt
 
 async def get_user_id(authorization: Annotated[str, Header()]):
     if authorization is None:
-        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Unauthorized")
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail={"error":"Unauthorized"})
 
     user_id, error = validate_authorization(authorization)
 
     if error:
-        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail=error)
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail={"error":"Unauthorized"})
 
     return user_id
     

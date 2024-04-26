@@ -4,7 +4,6 @@ from app.utils import JWTRequest, create_jwt
 import bcrypt
 from app.db.db import get_db
 from app.db.repository import create_user, get_user_by_username
-# from ..dependencies import get_user_id
 from ..models import AuthRequest, AuthResponse
 
 router = APIRouter(
@@ -20,7 +19,7 @@ async def signup(request: AuthRequest, db: Session = Depends(get_db)):
     existing_user = get_user_by_username(body['username'], db)
 
     if existing_user:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail={"error":"User already exists"})
 
     hashed = bcrypt.hashpw(body['password'].encode('utf-8'), bcrypt.gensalt())
     body['password'] = hashed
@@ -42,7 +41,7 @@ async def login(request: AuthRequest, db: Session = Depends(get_db)):
     existing_user = get_user_by_username(body['username'], db)
 
     if existing_user is None:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User does not exist")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail={"error":"User does not exist"})
 
     user_dict = existing_user.model_dump()
 
@@ -50,7 +49,7 @@ async def login(request: AuthRequest, db: Session = Depends(get_db)):
     stored_password_bytes = user_dict['password'].encode('utf-8')
 
     if bcrypt.checkpw(input_password_bytes,stored_password_bytes) == False:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect username or password")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail={"error":"Incorrect username or password"})
     
     jwt_request = JWTRequest(user_id=user_dict['id'], username=user_dict['username'])
 

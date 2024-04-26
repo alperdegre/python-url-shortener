@@ -5,7 +5,7 @@ from app.db.repository import create_url, delete_url_from_db, get_url_from_long_
 
 from sqlalchemy.orm import Session
 from ..models import ShortenURLRequest
-from app.utils import create_short_url, create_url_hash
+from app.utils import create_url_hash
 from ..dependencies import get_user_id
 from app.db.db import get_db
 
@@ -14,7 +14,7 @@ prefix="/api",
 )
 
 @router.post("/shorten")
-async def shorten(request: ShortenURLRequest,userId: int = Depends(get_user_id), db: Session = Depends(get_db)):
+async def shorten(request: ShortenURLRequest,_: int = Depends(get_user_id), db: Session = Depends(get_db)):
     dict_url = request.model_dump()
     db_url = get_url_from_long_url(dict_url['url'], db)
 
@@ -24,7 +24,7 @@ async def shorten(request: ShortenURLRequest,userId: int = Depends(get_user_id),
     hash = create_url_hash(10, db)
 
     if hash is None:
-        raise HTTPException(status_code=HTTP_500_INTERNAL_SERVER_ERROR, detail="There was an error creating hash")
+        raise HTTPException(status_code=HTTP_500_INTERNAL_SERVER_ERROR, detail={"error":"There was an error creating hash"})
 
     return create_url(request, hash, db)
 
@@ -34,9 +34,9 @@ async def get_urls(user_id: int = Depends(get_user_id), db: Session = Depends(ge
     return {"urls":urls}
 
 @router.delete("/delete/{url_id}")
-async def delete_url(url_id: str, userId: int = Depends(get_user_id),db: Session = Depends(get_db)):
+async def delete_url(url_id: int, userId: int = Depends(get_user_id),db: Session = Depends(get_db)):
     if userId == None:
-        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail="Unauthorized")
+        raise HTTPException(status_code=HTTP_401_UNAUTHORIZED, detail={"error":"Unauthorized"})
     deleted = delete_url_from_db(url_id, db)
     return {"url":deleted}
 
