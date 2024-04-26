@@ -25,8 +25,10 @@ async def shorten(request: ShortenURLRequest,user_id: int = Depends(get_user_id)
 
     if hash is None:
         raise HTTPException(status_code=HTTP_500_INTERNAL_SERVER_ERROR, detail={"error":"There was an error creating hash"})
+    
+    created_url = create_url(request, hash, user_id, db).__dict__
 
-    return create_url(request, hash, user_id, db)
+    return {"url":created_url['short_url']}
 
 @router.get("/get")
 async def get_urls(user_id: int = Depends(get_user_id), db: Session = Depends(get_db)):
